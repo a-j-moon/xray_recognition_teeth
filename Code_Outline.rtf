@@ -1,0 +1,210 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2758
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;\f1\fnil\fcharset0 Menlo-Regular;}
+{\colortbl;\red255\green255\blue255;\red27\green27\blue27;\red247\green247\blue247;\red13\green100\blue1;
+\red247\green247\blue247;\red27\green27\blue27;\red111\green90\blue30;\red181\green0\blue19;\red20\green0\blue196;
+\red151\green0\blue126;\red73\green17\blue135;\red0\green0\blue0;}
+{\*\expandedcolortbl;;\cssrgb\c14118\c14118\c14118;\cssrgb\c97647\c97647\c97647;\cssrgb\c0\c45490\c0;
+\cssrgb\c97647\c97647\c97647;\cssrgb\c14118\c14118\c14118;\cssrgb\c51373\c42353\c15686;\cssrgb\c76863\c10196\c8627;\cssrgb\c10980\c0\c81176;
+\cssrgb\c66667\c5098\c56863;\cssrgb\c36078\c14902\c60000;\cssrgb\c0\c0\c0;}
+\margl1440\margr1440\vieww11520\viewh8400\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\f0\fs28 \cf0 Coding pipeline derived from Medium (https://medium.com/eumentis/training-an-image-classification-model-in-pytorch-f925f80c2874).\
+\
+\pard\pardeftab720\partightenfactor0
+
+\f1 \cf2 \cb3 \expnd0\expndtw0\kerning0
+# Section 1 - Define path to the dataset
+\f0\fs24 \cf0 \cb1 \kerning1\expnd0\expndtw0 \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+\cf0 \
+\pard\pardeftab720\partightenfactor0
+
+\f1\fs28 \cf4 \cb5 \expnd0\expndtw0\kerning0
+\outl0\strokewidth0 \strokec4 # path to dataset\cf6 \strokec6 \
+\pard\pardeftab720\partightenfactor0
+\cf7 \strokec7 IMAGE_DATASET_PATH\cf6 \strokec6  = Path to your dataset.\
+\pard\pardeftab720\partightenfactor0
+\cf4 \strokec4 # training dataset path\cf6 \strokec6 \
+\pard\pardeftab720\partightenfactor0
+\cf7 \strokec7 TRAIN_DATASET_PATH\cf6 \strokec6  = IMAGE_DATASET_PATH + \cf8 \strokec8 "train"\cf6 \strokec6 \
+\pard\pardeftab720\partightenfactor0
+\cf4 \strokec4 # validation dataset path\cf6 \strokec6 \
+\pard\pardeftab720\partightenfactor0
+\cf7 \strokec7 VAL_DATASET_PATH\cf6 \strokec6  = IMAGE_DATASET_PATH + \cf8 \strokec8 "validation"\cf6 \strokec6 \
+\
+\pard\pardeftab720\partightenfactor0
+\cf4 \strokec4 # Defining our data augmentation pipeline\cf6 \strokec6  \cf4 \strokec4 feature extraction batch size\cf6 \strokec6 \
+\pard\pardeftab720\partightenfactor0
+\cf7 \strokec7 FEATURE_EXTRACTION_BATCH_SIZE\cf6 \strokec6  = \cf9 \strokec9 256\cf6 \strokec6 \
+\pard\pardeftab720\partightenfactor0
+\cf4 \strokec4 # fintune batch size\cf6 \strokec6 \
+\pard\pardeftab720\partightenfactor0
+\cf7 \strokec7 FINETUNE_BATCH_SIZE\cf6 \strokec6  = \cf9 \strokec9 64\cf6 \strokec6 \
+\pard\pardeftab720\partightenfactor0
+\cf4 \strokec4 # prediction batch size\cf6 \strokec6 \
+\pard\pardeftab720\partightenfactor0
+\cf7 \strokec7 PRED_BATCH_SIZE\cf6 \strokec6  = \cf9 \strokec9 4\cf6 \strokec6 \
+\pard\pardeftab720\partightenfactor0
+\cf4 \strokec4 # number of epochs\cf6 \strokec6 \
+\pard\pardeftab720\partightenfactor0
+\cf7 \strokec7 EPOCHS\cf6 \strokec6  = \cf9 \strokec9 500\cf6 \strokec6 \
+\cf7 \strokec7 LR\cf6 \strokec6  = \cf9 \strokec9 0.0001\cf6 \strokec6 \
+\cf7 \strokec7 LR_FINETUNE\cf6 \strokec6  = \cf9 \strokec9 0.0005\cf6 \strokec6 \
+\pard\pardeftab720\partightenfactor0
+\cf4 \strokec4 # values to normalize the tensor\cf6 \strokec6 \
+\pard\pardeftab720\partightenfactor0
+\cf7 \strokec7 MEAN\cf6 \strokec6  = [\cf9 \strokec9 0.485\cf6 \strokec6 , \cf9 \strokec9 0.456\cf6 \strokec6 , \cf9 \strokec9 0.406\cf6 \strokec6 ]\
+\cf7 \strokec7 STD\cf6 \strokec6  = [\cf9 \strokec9 0.229\cf6 \strokec6 , \cf9 \strokec9 0.224\cf6 \strokec6 , \cf9 \strokec9 0.225\cf6 \strokec6 ]\
+\pard\pardeftab720\partightenfactor0
+\cf4 \strokec4 # resize the image to IMAGE_SIZE\cf6 \strokec6 \
+\pard\pardeftab720\partightenfactor0
+\cf7 \strokec7 IMAGE_SIZE\cf6 \strokec6  = \cf9 \strokec9 224\cf6 \strokec6 \
+\cf7 \strokec7 resize\cf6 \strokec6  = transforms.RandomResizedCrop(IMAGE_SIZE)\
+\cf7 \strokec7 hFlip\cf6 \strokec6  = transforms.RandomHorizontalFlip(p=\cf9 \strokec9 0.25\cf6 \strokec6 )\
+\cf7 \strokec7 normalize\cf6 \strokec6  = transforms.Normalize(mean=MEAN, std=STD)\
+\pard\pardeftab720\partightenfactor0
+\cf4 \strokec4 # apply the above transformations\cf6 \strokec6 \
+\pard\pardeftab720\partightenfactor0
+\cf7 \strokec7 trainTransform\cf6 \strokec6  = transforms.Compose([resize, hFlip, transforms.ToTensor()])\
+\cf7 \strokec7 valTransform\cf6 \strokec6  = transforms.Compose([resize, transforms.ToTensor()])\
+\
+# Section 2 - Apply transformation\
+\
+\pard\pardeftab720\partightenfactor0
+\cf10 \cb5 \strokec10 def\cf6 \cb5 \strokec6  get_dataloader(\cf11 \cb5 \strokec11 rootDir, transforms, batchSize, shuffle\cf6 \cb5 \strokec6 ):\
+ \cf4 \strokec4 # create a dataset and use it to create a data loader\cf6 \strokec6 \
+ ds = datasets.ImageFolder(root=rootDir,transform=transforms)\
+ \cf4 \strokec4 # loading the dataset with the help of DataLoader by pasing the required arguments.\cf6 \strokec6 \
+ loader = DataLoader(ds, batch_size=batchSize, shuffle=shuffle, num_workers=os.cpu_count(),\
+      pin_memory=\cf10 \cb5 \strokec10 True\cf6 \cb5 \strokec6  \cf10 \cb5 \strokec10 if\cf6 \cb5 \strokec6  DEVICE == \cf8 \strokec8 "cuda"\cf6 \strokec6  \cf10 \cb5 \strokec10 else\cf6 \cb5 \strokec6  \cf10 \cb5 \strokec10 False\cf6 \cb5 \strokec6 )\
+ \cf4 \strokec4 # return a tuple of  the dataset and the data loader\cf6 \strokec6 \
+ \cf10 \cb5 \strokec10 return\cf6 \cb5 \strokec6  (ds, loader)\
+\
+\pard\pardeftab720\partightenfactor0
+\cf4 \strokec4 # calling the function to load the training dataset\cf6 \strokec6 \
+(trainDS, trainLoader) = get_dataloader(TRAIN_DATASET_PATH, transforms=trainTransform,\
+           batchSize=FEATURE_EXTRACTION_BATCH_SIZE, shuffle=\cf10 \cb5 \strokec10 True\cf6 \cb5 \strokec6 )\
+\cf4 \strokec4 # calling the function to load the validation dataset\cf6 \strokec6 \
+(valDS, valLoader) = get_dataloader(VAL_DATASET_PATH, transforms=valTransform,\
+          batchSize=FEATURE_EXTRACTION_BATCH_SIZE, shuffle=\cf10 \cb5 \strokec10 False\cf6 \cb5 \strokec6 )\
+\
+# Section 3 - Defining the base model efficientnet_b0\
+\
+\pard\pardeftab720\partightenfactor0
+\cf4 \strokec4 # defining efficientnet_b0 model\cf6 \strokec6 \
+model = efficientnet_b0(pretrained=True)\
+\cf4 \strokec4 # setting its parameters to non-trainable (by default they are trainable)\cf6 \strokec6 \
+for param in model.parameters():\
+param.requires_grad = False\
+\cf4 \strokec4 # Building on top of the base efficientnet_b0 model\cf6 \strokec6 \
+model.classifier[1] = nn.Sequential(nn.Linear(in_features=1280, out_features=len(number of classes you have in your dataset)), nn.Softmax(dim=1))\
+\cf4 \strokec4 # transfer model to cuda if available.\cf6 \strokec6 \
+model = model.to(DEVICE)\
+\
+\cf4 \strokec4 # initialize loss function and optimizer (notice that we are only\cf6 \strokec6 \
+\cf4 \strokec4 # providing the parameters of the classification top to our optimizer)\cf6 \strokec6 \
+lossFunc = nn.CrossEntropyLoss()\
+opt = torch.optim.Adam(model.parameters(), lr=LR)\
+\
+# Section 4 - Training the model\
+\
+\cf4 \strokec4 # calculate steps per epoch for training and validation set\cf6 \strokec6 \
+ trainSteps = \cf11 \cb5 \strokec11 len\cf6 \cb5 \strokec6 (trainDS) // FEATURE_EXTRACTION_BATCH_SIZE\
+ valSteps = \cf11 \cb5 \strokec11 len\cf6 \cb5 \strokec6 (valDS) // FEATURE_EXTRACTION_BATCH_SIZE\
+ \
+ \cf4 \strokec4 # loop over epochs\cf6 \strokec6 \
+ \cf11 \cb5 \strokec11 print\cf6 \cb5 \strokec6 (\cf8 \strokec8 "[INFO] training the network..."\cf6 \strokec6 )\
+ startTime = time.time()\
+ best_accuracy = \cf9 \strokec9 0\cf6 \strokec6 \
+ \cf10 \cb5 \strokec10 for\cf6 \cb5 \strokec6  e \cf10 \cb5 \strokec10 in\cf6 \cb5 \strokec6  tqdm(\cf11 \cb5 \strokec11 range\cf6 \cb5 \strokec6 (EPOCHS)):\
+  epoch_startTime = time.time()\
+  \cf4 \strokec4 # set the model in training mode\cf6 \strokec6 \
+  model.train()\
+  \cf4 \strokec4 # initialize the total training and validation loss\cf6 \strokec6 \
+  totalTrainLoss = \cf9 \strokec9 0\cf6 \strokec6 \
+  totalValLoss = \cf9 \strokec9 0\cf6 \strokec6 \
+  \cf4 \strokec4 # initialize the number of correct predictions in the training and validation step\cf6 \strokec6 \
+  trainCorrect = \cf9 \strokec9 0\cf6 \strokec6 \
+  valCorrect = \cf9 \strokec9 0\cf6 \strokec6 \
+  \cf4 \strokec4 # loop over the training set\cf6 \strokec6 \
+  \cf10 \cb5 \strokec10 for\cf6 \cb5 \strokec6  (i, (x, y)) \cf10 \cb5 \strokec10 in\cf6 \cb5 \strokec6  \cf11 \cb5 \strokec11 enumerate\cf6 \cb5 \strokec6 (trainLoader):\
+   loop_startTime = time.time()\
+   \cf4 \strokec4 # send the input to the device\cf6 \strokec6 \
+   (x, y) = (x.to(DEVICE), y.to(DEVICE))\
+   \cf4 \strokec4 # perform a forward pass and calculate the training loss\cf6 \strokec6 \
+   pred = model(x)\
+   loss = lossFunc(pred, y)\
+   \cf4 \strokec4 # calculate the gradients\cf6 \strokec6 \
+   loss.backward()\
+   \cf4 \strokec4 # check if we are updating the model parameters and if so update them,\cf6 \strokec6 \
+   \cf4 \strokec4 # and zero out the previously accumulated gradients\cf6 \strokec6 \
+   \cf10 \cb5 \strokec10 if\cf6 \cb5 \strokec6  (i + \cf9 \strokec9 2\cf6 \strokec6 ) % \cf9 \strokec9 2\cf6 \strokec6  == \cf9 \strokec9 0\cf6 \strokec6 :\
+    opt.step()\
+    opt.zero_grad()\
+   \cf4 \strokec4 # add the loss to the total training loss so far and\cf6 \strokec6 \
+   \cf4 \strokec4 # calculate the number of correct predictions\cf6 \strokec6 \
+   totalTrainLoss += loss\
+   trainCorrect += (pred.argmax(\cf9 \strokec9 1\cf6 \strokec6 ) == y).\cf11 \cb5 \strokec11 type\cf6 \cb5 \strokec6 (torch.\cf11 \cb5 \strokec11 float\cf6 \cb5 \strokec6 ).\cf11 \cb5 \strokec11 sum\cf6 \cb5 \strokec6 ().item()\
+   loop_endTime = time.time()\
+   \cf4 \strokec4 # print("Loop %s finished in:\{\} seconds", (format(loop_endTime - loop_startTime), str(i)))\cf6 \strokec6 \
+  \cf4 \strokec4 # switch off autograd\cf6 \strokec6 \
+  \cf10 \cb5 \strokec10 with\cf6 \cb5 \strokec6  torch.no_grad():\
+   \cf4 \strokec4 # set the model in evaluation mode\cf6 \strokec6 \
+   model.\cf11 \cb5 \strokec11 eval\cf6 \cb5 \strokec6 ()\
+   \cf4 \strokec4 # loop over the validation set\cf6 \strokec6 \
+   \cf10 \cb5 \strokec10 for\cf6 \cb5 \strokec6  (x, y) \cf10 \cb5 \strokec10 in\cf6 \cb5 \strokec6  valLoader:\
+    \cf4 \strokec4 # send the input to the device\cf6 \strokec6 \
+    (x, y) = (x.to(DEVICE), y.to(DEVICE))\
+    \cf4 \strokec4 # make the predictions and calculate the validation loss\cf6 \strokec6 \
+    pred = model(x)\
+    totalValLoss += lossFunc(pred, y)\
+    \cf4 \strokec4 # calculate the number of correct predictions\cf6 \strokec6 \
+    valCorrect += (pred.argmax(\cf9 \strokec9 1\cf6 \strokec6 ) == y).\cf11 \cb5 \strokec11 type\cf6 \cb5 \strokec6 (torch.\cf11 \cb5 \strokec11 float\cf6 \cb5 \strokec6 ).\cf11 \cb5 \strokec11 sum\cf6 \cb5 \strokec6 ().item()\
+\
+# Section 5 - Training and validation loss\
+\
+  \cf4 \strokec4 # calculate the average training and validation loss\cf6 \strokec6 \
+  avgTrainLoss = totalTrainLoss / trainSteps\
+  avgValLoss = totalValLoss / valSteps\
+  \cf4 \strokec4 # calculate the training and validation accuracy\cf6 \strokec6 \
+  trainCorrect = trainCorrect / \cf11 \cb5 \strokec11 len\cf6 \cb5 \strokec6 (trainDS)\
+  valCorrect = valCorrect / \cf11 \cb5 \strokec11 len\cf6 \cb5 \strokec6 (valDS)\
+  \cf4 \strokec4 # update our training history\cf6 \strokec6 \
+  H[\cf8 \strokec8 "train_loss"\cf6 \strokec6 ].append(avgTrainLoss.cpu().detach().numpy())\
+  H[\cf8 \strokec8 "train_acc"\cf6 \strokec6 ].append(trainCorrect)\
+  H[\cf8 \strokec8 "val_loss"\cf6 \strokec6 ].append(avgValLoss.cpu().detach().numpy())\
+  H[\cf8 \strokec8 "val_acc"\cf6 \strokec6 ].append(valCorrect)\
+  \cf4 \strokec4 # print the model training and validation information\cf6 \strokec6 \
+  \cf11 \cb5 \strokec11 print\cf6 \cb5 \strokec6 (\cf8 \strokec8 "[INFO] EPOCH: \{\}/\{\}"\cf6 \strokec6 .\cf11 \cb5 \strokec11 format\cf6 \cb5 \strokec6 (e + \cf9 \strokec9 1\cf6 \strokec6 , EPOCHS))\
+  \cf11 \cb5 \strokec11 print\cf6 \cb5 \strokec6 (\cf8 \strokec8 "Train loss: \{:.6f\}, Train accuracy: \{:.4f\}"\cf6 \strokec6 .\cf11 \cb5 \strokec11 format\cf6 \cb5 \strokec6 (avgTrainLoss, trainCorrect))\
+  \cf11 \cb5 \strokec11 print\cf6 \cb5 \strokec6 (\cf8 \strokec8 "Val loss: \{:.6f\}, Val accuracy: \{:.4f\}"\cf6 \strokec6 .\cf11 \cb5 \strokec11 format\cf6 \cb5 \strokec6 (avgValLoss, valCorrect))\
+  epoch_endTime = time.time()\
+  \cf11 \cb5 \strokec11 print\cf6 \cb5 \strokec6 (\cf8 \strokec8 "Epoch finished in:\{\} seconds"\cf6 \strokec6 .\cf11 \cb5 \strokec11 format\cf6 \cb5 \strokec6 (epoch_endTime - epoch_startTime))\
+  \cf4 \strokec4 ######### INTERMITTENT SAVING OF MODEL ###########\cf6 \strokec6 \
+  \cf4 \strokec4 # Save model weights every 10 epochs\cf6 \strokec6 \
+  \cf10 \cb5 \strokec10 if\cf6 \cb5 \strokec6  (e + \cf9 \strokec9 1\cf6 \strokec6 ) % \cf9 \strokec9 10\cf6 \strokec6  == \cf9 \strokec9 0\cf6 \strokec6 :\
+   torch.save(model.state_dict(), TRAINING_ARTIFACTS_PATH + \cf8 \strokec8 f"model_weights_epoch_\cf8 \cb5 \strokec12 \{e + \cf9 \cb5 \strokec9 1\cf8 \cb5 \strokec12 \}\cf8 \cb5 \strokec8 .pt"\cf6 \strokec6 )\
+  \cf4 \strokec4 # Check if current epoch's val accuracy is better than the best val accuracy so far. If so, save that model\cf6 \strokec6 \
+  \cf10 \cb5 \strokec10 if\cf6 \cb5 \strokec6  valCorrect > best_accuracy:\
+   best_accuracy = valCorrect\
+   \cf4 \strokec4 # Save the best model weights\cf6 \strokec6 \
+   torch.save(model.state_dict(), TRAINING_ARTIFACTS_PATH + \cf8 \strokec8 f"model_weights_best_\cf8 \cb5 \strokec12 \{e + \cf9 \cb5 \strokec9 1\cf8 \cb5 \strokec12 \}\cf8 \cb5 \strokec8 .pt"\cf6 \strokec6 )\
+\
+ \cf4 \strokec4 # display the total time needed to perform the training\cf6 \strokec6 \
+ endTime = time.time()\
+ \cf11 \cb5 \strokec11 print\cf6 \cb5 \strokec6 (\cf8 \strokec8 "[INFO] total time taken to train the model: \{:.2f\}s"\cf6 \strokec6 .\cf11 \cb5 \strokec11 format\cf6 \cb5 \strokec6 (endTime - startTime))\
+ \cf4 \strokec4 # plot the training loss and accuracy\cf6 \strokec6 \
+ plt.style.use(\cf8 \strokec8 "ggplot"\cf6 \strokec6 )\
+ plt.figure()\
+ plt.plot(H[\cf8 \strokec8 "train_loss"\cf6 \strokec6 ], label=\cf8 \strokec8 "train_loss"\cf6 \strokec6 )\
+ plt.plot(H[\cf8 \strokec8 "val_loss"\cf6 \strokec6 ], label=\cf8 \strokec8 "val_loss"\cf6 \strokec6 )\
+ plt.plot(H[\cf8 \strokec8 "train_acc"\cf6 \strokec6 ], label=\cf8 \strokec8 "train_acc"\cf6 \strokec6 )\
+ plt.plot(H[\cf8 \strokec8 "val_acc"\cf6 \strokec6 ], label=\cf8 \strokec8 "val_acc"\cf6 \strokec6 )\
+ plt.title(\cf8 \strokec8 "Training Loss and Accuracy on Dataset"\cf6 \strokec6 )\
+ plt.xlabel(\cf8 \strokec8 "Epoch #"\cf6 \strokec6 )\
+ plt.ylabel(\cf8 \strokec8 "Loss/Accuracy"\cf6 \strokec6 )\
+ plt.legend(loc=\cf8 \strokec8 "lower left"\cf6 \strokec6 )\
+\
+Model training is complete!\
+}
