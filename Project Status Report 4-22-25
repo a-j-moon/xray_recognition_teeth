@@ -1,0 +1,25 @@
+Progress toward goals of your project
+  List of goals - > 
+    Find a processable data set: Done! I have found two different datasets to use, one includes PA x-rays and one includes panoramics.
+    Find sources: I currently have around 8 sources, including informations on neural networking to caries risks.
+    Create GitHub with everything included: Done! This is the GitHub with everything on it, including a ReadMe file with a description.
+    Download Python: Done! I got some help downloading Python and getting it set up.
+    Write an outline of code: I found some code that has quite a bit of extra information, so I am either going to trim it up or try                                    writing a simple code based off it.
+    Run first code: Not quite here yet - this will be after I have a full code written! This will include a training stage and a testing                      stage.
+    Revise and Expand: After running it for the first time, I will see where I need to alter my code and make revisions. If I have extra                         time, I will fine tune it even more to expand on my project.
+    
+Evidence that you've tried to complete preliminary analyses
+  Link to github repository shared with olso2066: Done!
+  In the github repository, provide clear information in the README file: Done!
+  Links and description of all data used (do NOT try to upload the data): 
+    https://data.mendeley.com/datasets/c4hhrkxytw/4 <- pano
+    **Only using caries and healthy teeth 
+    https://www.kaggle.com/datasets/nguyenttung/dental-periapical-x-ray-dataset <- PA
+    **All data is relevant 
+  Include all draft scripts: Done!
+Methods outline - Answer the following questions as best you can.
+  How did you test your hypothesis? In the current stages of that, my hypothesis is that neural networking can be used to recognize carious lesions on x-rays. This will be tested by how successful the output is of my model.
+  Why did you choose the approach you chose? I read quite a bit of literature that use this sort of modeling for other things.
+  Statistical analyses or models. The model I am using is a convolutional nerual networking model.
+  Figure that includes analysis pipeline. Done! This is uploaded on the GitHub page.
+  Notes: Use first-person. You may use passive voice, but you can also use active voice
