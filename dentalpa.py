@@ -1,3 +1,5 @@
+# Sorting images into two different lists
+
 import pathlib
 
 import numpy as np
